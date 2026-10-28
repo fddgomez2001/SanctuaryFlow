@@ -51,7 +51,7 @@ The installer is written to `target/release/bundle/nsis/`.
 ## Releases and the website
 
 - **Releases are automatic.** `.github/workflows/release.yml` runs on every push to `main` that changes the app (not `website/` or `docs/`). It runs the type check and unit tests, builds the installer on Windows, attests it, and publishes it as `SanctuaryFlow-Setup-x64.exe` in the release named after the version in `src-tauri/tauri.conf.json`. Pushing without changing the version replaces that release's installer; change the version (also in `package.json` and `Cargo.toml`) to publish a new numbered release. It can also be started by hand from the Actions tab.
-- **The website** is plain HTML in `website/` (no build step). On Vercel, import this repository and keep the default settings: `vercel.json` serves `website/`, skips the install and build of the desktop app, and sets security headers. Its Download buttons point to `releases/latest/download/SanctuaryFlow-Setup-x64.exe`, so they always give the newest installer without redeploying the site.
+- **The website** is plain HTML in `website/` (no build step). On Vercel, import this repository and keep the default settings: `vercel.json` serves `website/`, skips the install and build of the desktop app, and sets security headers. Its Download buttons go to the site's own `/download`, which `vercel.json` forwards to `releases/latest/download/SanctuaryFlow-Setup-x64.exe`, so they always give the newest installer without redeploying the site. To see the site on this computer: `node scripts/serve-website.mjs`, then open http://localhost:4321.
 
 ## Project layout
 

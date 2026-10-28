@@ -6,6 +6,13 @@
   "outputDirectory": "website",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/download",
+      "destination": "https://github.com/fddgomez2001/SanctuaryFlow/releases/latest/download/SanctuaryFlow-Setup-x64.exe",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -24,8 +31,8 @@
       ]
     },
     {
-      "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, must-revalidate" }]
+      "source": "/assets/fonts/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }]
     }
   ]
 }

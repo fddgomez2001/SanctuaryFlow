@@ -15,10 +15,10 @@
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
     <link rel="preload" href="/assets/fonts/playfair-display-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="stylesheet" href="/assets/site.css?v=2" />
     <!-- Applies a remembered light or dark choice before the page is drawn. -->
-    <script src="/assets/theme.js"></script>
-    <script src="/assets/site.js" defer></script>
+    <script src="/assets/theme.js?v=2"></script>
+    <script src="/assets/site.js?v=2" defer></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -31,6 +31,7 @@
         </a>
         <nav class="top-nav" aria-label="Sections">
           <a href="#features">Features</a>
+          <a href="#developer">Developer</a>
           <a href="#download">Download</a>
           <a href="#questions">Questions</a>
         </nav>
@@ -55,13 +56,13 @@
               It runs on one Windows computer and keeps working when the internet doesn’t.
             </p>
             <div class="hero-actions">
-              <a class="button" data-download href="https://github.com/fddgomez2001/SanctuaryFlow/releases/latest/download/SanctuaryFlow-Setup-x64.exe">
+              <a class="button" data-download href="/download">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" /></svg>
                 Download for Windows
               </a>
               <a class="text-link" href="#features">See how it works</a>
             </div>
-            <p class="fineprint"><span data-release-line>Windows 10 and 11, 64-bit</span></p>
+            <p class="fineprint"><span data-release-line>Free · Windows 10 and 11, 64-bit</span></p>
           </div>
           <figure class="shot shot-hero">
             <img src="/assets/shots/live.webp" width="1440" height="900" alt="The Live Presentation page: the service lineup on the left, the song's slides in the middle, and the live output preview on the right." />
@@ -181,14 +182,62 @@
         </div>
       </section>
 
+      <section class="maker" id="developer" aria-labelledby="maker-title">
+        <div class="wrap maker-grid">
+          <div class="maker-portrait" data-tilt>
+            <div class="maker-float">
+              <div class="maker-stage">
+                <span class="maker-outline" aria-hidden="true"></span>
+                <span class="maker-arch" aria-hidden="true"></span>
+                <img class="maker-person" src="/assets/frank-gomez-cutout.webp" width="560" height="521" loading="lazy" alt="Frank Gomez, the developer of SanctuaryFlow, smiling, in a dark suit and tie." />
+                <span class="maker-badge">
+                  <img src="/assets/logo-96.png" alt="" width="30" height="30" />
+                  <span>Made for <strong>Joyful Sound Church – International</strong></span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="maker-copy">
+            <p class="eyebrow">The developer</p>
+            <h2 id="maker-title">Made with love for Joyful Sound Church – International</h2>
+            <span class="ornament" aria-hidden="true"></span>
+            <p>
+              SanctuaryFlow was made by <strong>Frank Gomez</strong> for his church family at Joyful Sound Church –
+              International, so that every song, every verse and every announcement reaches the screen calmly and on
+              time, and the people in the room can simply worship.
+            </p>
+            <p>
+              It is a vibe-coded app. Each feature began as an idea described in plain words, was shaped together with an
+              AI coding assistant one request at a time, and was tried in the real app until it felt right for Sunday.
+            </p>
+            <p>
+              SanctuaryFlow is free. If it helps your church worship too, it was made for you as well.
+            </p>
+            <blockquote class="maker-verse">
+              <p>
+                “And whatever you do, work heartily, as for the Lord and not for men, knowing that from the Lord you will
+                receive the reward of the inheritance; for you serve the Lord Christ.”
+              </p>
+              <footer>Colossians 3:23–24 (World English Bible)</footer>
+            </blockquote>
+            <p class="maker-sign">Frank Gomez <span>Developer of SanctuaryFlow</span></p>
+            <ul class="maker-tags" aria-label="About SanctuaryFlow">
+              <li>Vibe coded with AI</li>
+              <li>Free to download and use</li>
+              <li>Dedicated to Joyful Sound Church – International</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       <section class="download" id="download" aria-labelledby="download-title">
         <div class="wrap download-grid">
           <div>
             <p class="eyebrow">Download</p>
             <h2 id="download-title">Get SanctuaryFlow for Windows</h2>
             <p>
-              The installer is built automatically from the source code each time the app changes, so this button always
-              gives you the newest version.
+              The installer is rebuilt automatically each time SanctuaryFlow is updated, so this button always gives you
+              the newest version.
             </p>
             <dl class="release" data-release hidden>
               <div><dt>Version</dt><dd data-version></dd></div>
@@ -202,14 +251,11 @@
                 </dd>
               </div>
             </dl>
-            <p class="release-fallback" data-release-fallback>
-              Version details are on the <a href="https://github.com/fddgomez2001/SanctuaryFlow/releases/latest">GitHub release page</a>.
-            </p>
-            <a class="button button-large" data-download href="https://github.com/fddgomez2001/SanctuaryFlow/releases/latest/download/SanctuaryFlow-Setup-x64.exe">
+            <a class="button button-large" data-download href="/download">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" /></svg>
               Download SanctuaryFlow-Setup-x64.exe
             </a>
-            <p class="fineprint">Windows 10 or 11, 64-bit. A projector or TV as a second display for the room.</p>
+            <p class="fineprint">Free. Windows 10 or 11, 64-bit. A projector or TV as a second display for the room.</p>
           </div>
 
           <ol class="steps">
@@ -237,15 +283,11 @@
         <div class="wrap safety-grid">
           <h2 id="safety-title">Download safely</h2>
           <ul>
-            <li>Get SanctuaryFlow only from this page or its <a href="https://github.com/fddgomez2001/SanctuaryFlow/releases">GitHub releases</a>. The download buttons link straight to GitHub.</li>
+            <li>Download SanctuaryFlow only from this website, using its Download buttons.</li>
             <li>Nobody from SanctuaryFlow will send you the installer by email, chat or a file-sharing link, or ask for your passwords or remote access to your computer.</li>
             <li>
               Check the file’s fingerprint: in PowerShell, run
               <code>Get-FileHash .\SanctuaryFlow-Setup-x64.exe</code> and compare it with the SHA-256 above.
-            </li>
-            <li>
-              Each installer comes with a GitHub build attestation showing it was built from this source code:
-              <code>gh attestation verify SanctuaryFlow-Setup-x64.exe -R fddgomez2001/SanctuaryFlow</code>
             </li>
             <li>This website has no ads, no trackers, no cookies and no forms.</li>
           </ul>
@@ -256,6 +298,10 @@
         <div class="wrap faq-grid">
           <h2 id="faq-title">Questions</h2>
           <div class="faq-list">
+            <details>
+              <summary>Is SanctuaryFlow free?</summary>
+              <p>Yes. It is free to download and free to use. It was made for Joyful Sound Church – International and is shared with any church it can help.</p>
+            </details>
             <details>
               <summary>Does it need the internet?</summary>
               <p>No. Presenting works offline. The internet is used only when you choose to: downloading a Bible translation, showing a Canva design, or syncing between computers.</p>
@@ -291,12 +337,13 @@
           <img src="/assets/logo-96.png" alt="" width="28" height="28" />
           <span>SanctuaryFlow</span>
         </div>
-        <nav aria-label="Project links">
-          <a href="https://github.com/fddgomez2001/SanctuaryFlow">Source code</a>
-          <a href="https://github.com/fddgomez2001/SanctuaryFlow/releases">All versions</a>
-          <a href="https://github.com/fddgomez2001/SanctuaryFlow/issues">Report a problem</a>
+        <nav aria-label="Sections">
+          <a href="#features">Features</a>
+          <a href="#developer">Developer</a>
+          <a href="#download">Download</a>
+          <a href="#questions">Questions</a>
         </nav>
-        <p>This site sets no cookies and collects no personal data. © 2026 SanctuaryFlow.</p>
+        <p>Made by Frank Gomez for Joyful Sound Church – International. This site sets no cookies and collects no personal data. © 2026 SanctuaryFlow.</p>
       </div>
     </footer>
   </body>

@@ -1,12 +1,11 @@
-// The light/dark switch, and the newest release's details from GitHub.
-// Everything written into the page uses textContent; links are only ever
-// pointed at this project's own GitHub release downloads.
+// The light/dark switch, and the newest installer's version, size and
+// fingerprint. Everything written into the page uses textContent; the
+// Download buttons always stay on this site's own /download address.
 (function () {
   "use strict";
 
   var REPO = "fddgomez2001/SanctuaryFlow";
   var ASSET = "SanctuaryFlow-Setup-x64.exe";
-  var DOWNLOAD_PREFIX = "https://github.com/" + REPO + "/releases/download/";
   var root = document.documentElement;
 
   // Light / dark
@@ -50,12 +49,6 @@
     for (var i = 0; i < assets.length; i++) if (assets[i] && assets[i].name === ASSET) asset = assets[i];
     if (!asset) return;
 
-    var url = String(asset.browser_download_url || "");
-    if (url.indexOf(DOWNLOAD_PREFIX) === 0) {
-      var links = document.querySelectorAll("[data-download]");
-      for (var j = 0; j < links.length; j++) links[j].setAttribute("href", url);
-    }
-
     var version = String(release.tag_name || "").replace(/^v/, "");
     var size = typeof asset.size === "number" && asset.size > 0 ? megabytes(asset.size) : "";
     var updated = new Date(asset.updated_at || release.published_at || "");
@@ -65,15 +58,13 @@
     if (version) setText("[data-version]", version);
     if (size) setText("[data-size]", size);
     if (!isNaN(updated.getTime())) setText("[data-updated]", updated.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }));
-    setText("[data-sha256]", sha || "Listed in SHA256SUMS.txt on the release page");
-    var copy = document.querySelector("[data-copy-hash]");
-    if (copy && !sha) copy.hidden = true;
-    setText("[data-release-line]", ["Version " + version, size, "Windows 10 and 11, 64-bit"].filter(Boolean).join(" · "));
+    setText("[data-sha256]", sha);
+    var hashRow = document.querySelector(".release-hash");
+    if (hashRow && !sha) hashRow.hidden = true;
+    setText("[data-release-line]", ["Free", "Version " + version, size, "Windows 10 and 11, 64-bit"].filter(Boolean).join(" · "));
 
     var details = document.querySelector("[data-release]");
-    var fallback = document.querySelector("[data-release-fallback]");
     if (details && version) details.hidden = false;
-    if (fallback && version) fallback.hidden = true;
   }
 
   if (window.fetch) {
@@ -84,13 +75,41 @@
         referrerPolicy: "no-referrer",
       })
       .then(function (response) {
-        if (!response.ok) throw new Error("GitHub answered " + response.status);
+        if (!response.ok) throw new Error("Release details unavailable: " + response.status);
         return response.json();
       })
       .then(showRelease)
       .catch(function () {
         // The buttons still download the newest installer; only the details are missing.
       });
+  }
+
+  // The developer's portrait tilts toward the pointer, with light moving across the gold.
+  var tilt = document.querySelector("[data-tilt]");
+  var stage = tilt ? tilt.querySelector(".maker-stage") : null;
+  var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (tilt && stage && finePointer && !reduceMotion) {
+    var frame = 0;
+    tilt.addEventListener("pointermove", function (event) {
+      var box = tilt.getBoundingClientRect();
+      var x = Math.min(0.5, Math.max(-0.5, (event.clientX - box.left) / box.width - 0.5));
+      var y = Math.min(0.5, Math.max(-0.5, (event.clientY - box.top) / box.height - 0.5));
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(function () {
+        stage.classList.add("is-tilting");
+        stage.style.transform = "rotateX(" + (-y * 14).toFixed(2) + "deg) rotateY(" + (x * 18).toFixed(2) + "deg)";
+        stage.style.setProperty("--gx", (50 + x * 90).toFixed(1) + "%");
+        stage.style.setProperty("--gy", (30 + y * 90).toFixed(1) + "%");
+      });
+    });
+    tilt.addEventListener("pointerleave", function () {
+      window.cancelAnimationFrame(frame);
+      stage.classList.remove("is-tilting");
+      stage.style.transform = "";
+      stage.style.removeProperty("--gx");
+      stage.style.removeProperty("--gy");
+    });
   }
 
   // Copy the SHA-256
