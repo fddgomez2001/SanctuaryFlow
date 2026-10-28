@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-media-set-probe"
+description = "Enables the media_set_probe command without any pre-configured scope."
+commands.allow = ["media_set_probe"]
+
+[[permission]]
+identifier = "deny-media-set-probe"
+description = "Denies the media_set_probe command without any pre-configured scope."
+commands.deny = ["media_set_probe"]

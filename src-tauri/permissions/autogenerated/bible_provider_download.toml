@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-bible-provider-download"
+description = "Enables the bible_provider_download command without any pre-configured scope."
+commands.allow = ["bible_provider_download"]
+
+[[permission]]
+identifier = "deny-bible-provider-download"
+description = "Denies the bible_provider_download command without any pre-configured scope."
+commands.deny = ["bible_provider_download"]

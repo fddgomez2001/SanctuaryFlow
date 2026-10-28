@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-bible-validation-report"
+description = "Enables the bible_validation_report command without any pre-configured scope."
+commands.allow = ["bible_validation_report"]
+
+[[permission]]
+identifier = "deny-bible-validation-report"
+description = "Denies the bible_validation_report command without any pre-configured scope."
+commands.deny = ["bible_validation_report"]

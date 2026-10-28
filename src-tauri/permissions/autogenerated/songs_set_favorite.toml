@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-songs-set-favorite"
+description = "Enables the songs_set_favorite command without any pre-configured scope."
+commands.allow = ["songs_set_favorite"]
+
+[[permission]]
+identifier = "deny-songs-set-favorite"
+description = "Denies the songs_set_favorite command without any pre-configured scope."
+commands.deny = ["songs_set_favorite"]

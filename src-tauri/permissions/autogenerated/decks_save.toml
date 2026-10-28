@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-decks-save"
+description = "Enables the decks_save command without any pre-configured scope."
+commands.allow = ["decks_save"]
+
+[[permission]]
+identifier = "deny-decks-save"
+description = "Denies the decks_save command without any pre-configured scope."
+commands.deny = ["decks_save"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-bible-import-preview"
+description = "Enables the bible_import_preview command without any pre-configured scope."
+commands.allow = ["bible_import_preview"]
+
+[[permission]]
+identifier = "deny-bible-import-preview"
+description = "Denies the bible_import_preview command without any pre-configured scope."
+commands.deny = ["bible_import_preview"]

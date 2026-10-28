@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-services-save"
+description = "Enables the services_save command without any pre-configured scope."
+commands.allow = ["services_save"]
+
+[[permission]]
+identifier = "deny-services-save"
+description = "Denies the services_save command without any pre-configured scope."
+commands.deny = ["services_save"]

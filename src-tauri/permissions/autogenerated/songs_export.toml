@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-songs-export"
+description = "Enables the songs_export command without any pre-configured scope."
+commands.allow = ["songs_export"]
+
+[[permission]]
+identifier = "deny-songs-export"
+description = "Denies the songs_export command without any pre-configured scope."
+commands.deny = ["songs_export"]

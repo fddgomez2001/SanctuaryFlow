@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-bible-passage-use"
+description = "Enables the bible_passage_use command without any pre-configured scope."
+commands.allow = ["bible_passage_use"]
+
+[[permission]]
+identifier = "deny-bible-passage-use"
+description = "Denies the bible_passage_use command without any pre-configured scope."
+commands.deny = ["bible_passage_use"]

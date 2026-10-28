@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-canva-info"
+description = "Enables the canva_info command without any pre-configured scope."
+commands.allow = ["canva_info"]
+
+[[permission]]
+identifier = "deny-canva-info"
+description = "Denies the canva_info command without any pre-configured scope."
+commands.deny = ["canva_info"]

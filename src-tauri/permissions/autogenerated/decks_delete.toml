@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-decks-delete"
+description = "Enables the decks_delete command without any pre-configured scope."
+commands.allow = ["decks_delete"]
+
+[[permission]]
+identifier = "deny-decks-delete"
+description = "Denies the decks_delete command without any pre-configured scope."
+commands.deny = ["decks_delete"]

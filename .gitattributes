@@ -1,0 +1,12 @@
+# Same line endings on every computer and on the build server (the SQL
+# migrations are compiled into the app and checksummed).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+*.ico binary
+*.icns binary
+*.woff2 binary
+*.exe binary
+*.zip binary
+*.pdf binary

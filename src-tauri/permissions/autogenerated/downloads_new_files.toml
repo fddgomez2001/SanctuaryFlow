@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-downloads-new-files"
+description = "Enables the downloads_new_files command without any pre-configured scope."
+commands.allow = ["downloads_new_files"]
+
+[[permission]]
+identifier = "deny-downloads-new-files"
+description = "Denies the downloads_new_files command without any pre-configured scope."
+commands.deny = ["downloads_new_files"]

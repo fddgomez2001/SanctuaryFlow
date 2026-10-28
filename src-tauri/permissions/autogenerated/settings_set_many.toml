@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-settings-set-many"
+description = "Enables the settings_set_many command without any pre-configured scope."
+commands.allow = ["settings_set_many"]
+
+[[permission]]
+identifier = "deny-settings-set-many"
+description = "Denies the settings_set_many command without any pre-configured scope."
+commands.deny = ["settings_set_many"]

@@ -1,0 +1,37 @@
+[package]
+name = "sanctuaryflow"
+description = "SanctuaryFlow worship presentation"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lib]
+name = "sanctuaryflow_lib"
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+sanctuary-core = { path = "../crates/sanctuary-core" }
+tauri = { version = "2.12.5", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2.8.3"
+tauri-plugin-opener = "2.7.2"
+tauri-plugin-single-instance = "2.5.4"
+tauri-plugin-log = "2.10.1"
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+log.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+reqwest = { version = "0.13.5", default-features = false, features = ["native-tls"] }
+tempfile = "3.27.0"
+zip = { version = "9.1.2", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+csv = "1.4.0"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_Storage_FileSystem", "Win32_System_Registry"] }
+windows = { version = "0.62.2", features = ["Win32_Foundation", "Win32_System_Com", "Win32_System_Com_StructuredStorage", "Win32_System_Ole", "Win32_System_Variant"] }
+# The same WebView2 bindings Tauri uses, for taking pictures of a webview.
+webview2-com = "0.39.1"

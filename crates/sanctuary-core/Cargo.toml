@@ -1,0 +1,22 @@
+[package]
+name = "sanctuary-core"
+description = "Storage, Bible import and backup engine for SanctuaryFlow"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+log.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+rusqlite = { version = "0.41.0", default-features = false, features = ["bundled", "backup", "cache"] }
+quick-xml = "0.42.0"
+csv = "1.4.0"
+zip = { version = "9.1.2", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+sha2 = "0.11.1"
+hex = "0.4.3"
+tempfile = "3.27.0"
+ts-rs = { version = "12.0.1", features = ["serde-json-impl"] }

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-canva-capture-page"
+description = "Enables the canva_capture_page command without any pre-configured scope."
+commands.allow = ["canva_capture_page"]
+
+[[permission]]
+identifier = "deny-canva-capture-page"
+description = "Denies the canva_capture_page command without any pre-configured scope."
+commands.deny = ["canva_capture_page"]

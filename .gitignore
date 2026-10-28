@@ -1,0 +1,15 @@
+node_modules/
+dist/
+target/
+*.log
+.vite/
+coverage/
+test-results/
+playwright-report/
+.env
+.env.*
+!.env.example
+/tmp-e2e-data/
+src-tauri/gen/
+/*.exe
+.vercel/

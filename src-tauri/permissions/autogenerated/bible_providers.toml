@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-bible-providers"
+description = "Enables the bible_providers command without any pre-configured scope."
+commands.allow = ["bible_providers"]
+
+[[permission]]
+identifier = "deny-bible-providers"
+description = "Denies the bible_providers command without any pre-configured scope."
+commands.deny = ["bible_providers"]

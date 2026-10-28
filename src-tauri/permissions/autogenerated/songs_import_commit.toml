@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-songs-import-commit"
+description = "Enables the songs_import_commit command without any pre-configured scope."
+commands.allow = ["songs_import_commit"]
+
+[[permission]]
+identifier = "deny-songs-import-commit"
+description = "Denies the songs_import_commit command without any pre-configured scope."
+commands.deny = ["songs_import_commit"]

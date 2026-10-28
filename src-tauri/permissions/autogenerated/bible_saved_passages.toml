@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-bible-saved-passages"
+description = "Enables the bible_saved_passages command without any pre-configured scope."
+commands.allow = ["bible_saved_passages"]
+
+[[permission]]
+identifier = "deny-bible-saved-passages"
+description = "Denies the bible_saved_passages command without any pre-configured scope."
+commands.deny = ["bible_saved_passages"]

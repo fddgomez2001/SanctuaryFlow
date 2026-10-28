@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-songs-save"
+description = "Enables the songs_save command without any pre-configured scope."
+commands.allow = ["songs_save"]
+
+[[permission]]
+identifier = "deny-songs-save"
+description = "Denies the songs_save command without any pre-configured scope."
+commands.deny = ["songs_save"]

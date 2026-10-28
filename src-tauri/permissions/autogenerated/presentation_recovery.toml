@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-presentation-recovery"
+description = "Enables the presentation_recovery command without any pre-configured scope."
+commands.allow = ["presentation_recovery"]
+
+[[permission]]
+identifier = "deny-presentation-recovery"
+description = "Denies the presentation_recovery command without any pre-configured scope."
+commands.deny = ["presentation_recovery"]

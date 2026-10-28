@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-bible-translation-delete"
+description = "Enables the bible_translation_delete command without any pre-configured scope."
+commands.allow = ["bible_translation_delete"]
+
+[[permission]]
+identifier = "deny-bible-translation-delete"
+description = "Denies the bible_translation_delete command without any pre-configured scope."
+commands.deny = ["bible_translation_delete"]

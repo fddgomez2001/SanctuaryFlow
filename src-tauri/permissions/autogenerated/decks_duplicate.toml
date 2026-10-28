@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-decks-duplicate"
+description = "Enables the decks_duplicate command without any pre-configured scope."
+commands.allow = ["decks_duplicate"]
+
+[[permission]]
+identifier = "deny-decks-duplicate"
+description = "Denies the decks_duplicate command without any pre-configured scope."
+commands.deny = ["decks_duplicate"]

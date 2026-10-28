@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-media-rename-folder"
+description = "Enables the media_rename_folder command without any pre-configured scope."
+commands.allow = ["media_rename_folder"]
+
+[[permission]]
+identifier = "deny-media-rename-folder"
+description = "Denies the media_rename_folder command without any pre-configured scope."
+commands.deny = ["media_rename_folder"]

@@ -1,0 +1,52 @@
+{
+  "format": "sanctuaryflow-bible",
+  "version": 1,
+  "translation": {
+    "code": "TEST",
+    "name": "Synthetic Test Text",
+    "language": "en",
+    "license": "Test data — not Scripture"
+  },
+  "books": [
+    {
+      "id": "GEN",
+      "name": "Genesis",
+      "chapters": [
+        {
+          "chapter": 1,
+          "verses": [
+            { "verse": 1, "text": "Synthetic test sentence for Genesis one one." },
+            { "verse": 2, "text": "Synthetic test sentence for Genesis one two." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PSA",
+      "name": "Psalms",
+      "chapters": [
+        {
+          "chapter": 23,
+          "verses": [
+            { "verse": 1, "text": "Placeholder line alpha for testing the reader." },
+            { "verse": 2, "text": "Placeholder line beta with a searchable word lighthouse." },
+            { "verse": 3, "text": "Placeholder line gamma for testing the reader." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "JHN",
+      "name": "John",
+      "chapters": [
+        {
+          "chapter": 3,
+          "verses": [
+            { "verse": 16, "text": "Synthetic sample text standing in for John three sixteen." },
+            { "verse": 17, "text": "Synthetic sample text standing in for John three seventeen." }
+          ]
+        }
+      ]
+    }
+  ]
+}

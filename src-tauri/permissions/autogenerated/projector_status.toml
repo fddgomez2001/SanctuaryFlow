@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-projector-status"
+description = "Enables the projector_status command without any pre-configured scope."
+commands.allow = ["projector_status"]
+
+[[permission]]
+identifier = "deny-projector-status"
+description = "Denies the projector_status command without any pre-configured scope."
+commands.deny = ["projector_status"]

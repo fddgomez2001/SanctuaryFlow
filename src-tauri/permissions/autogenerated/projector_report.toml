@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-projector-report"
+description = "Enables the projector_report command without any pre-configured scope."
+commands.allow = ["projector_report"]
+
+[[permission]]
+identifier = "deny-projector-report"
+description = "Denies the projector_report command without any pre-configured scope."
+commands.deny = ["projector_report"]

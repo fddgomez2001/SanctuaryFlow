@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-themes-delete"
+description = "Enables the themes_delete command without any pre-configured scope."
+commands.allow = ["themes_delete"]
+
+[[permission]]
+identifier = "deny-themes-delete"
+description = "Denies the themes_delete command without any pre-configured scope."
+commands.deny = ["themes_delete"]

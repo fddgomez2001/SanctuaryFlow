@@ -1,0 +1,136 @@
+# Builds the Windows installer from this repository and publishes it as a
+# GitHub release, so the website's Download button always gets the newest
+# version. Runs on every push to main that changes the app (not the website
+# or docs), and by hand from the Actions tab.
+#
+# The release is named after the version in src-tauri/tauri.conf.json
+# (v0.1.0, …). Pushing changes without changing the version replaces the
+# installer of that release; change the version to publish a new one.
+name: Build and publish the installer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "src-tauri/**"
+      - "crates/**"
+      - "shared/**"
+      - "public/**"
+      - "index.html"
+      - "projector.html"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".cargo/**"
+      - "vite.config.ts"
+      - "tsconfig.json"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One release build at a time; a newer push waits for the running one.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release:
+    name: Test, build and publish
+    runs-on: windows-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write # create the release and upload the installer
+      id-token: write # sign the build provenance attestation
+      attestations: write
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Set up pnpm
+        run: npm install --global pnpm@10.33.0
+
+      - name: Set up Rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+
+      - name: Cache Rust builds
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # A broken change never reaches the Download button.
+      - name: Check types and run the tests
+        run: |
+          pnpm typecheck
+          pnpm test
+          cargo test -p sanctuary-core --locked
+
+      - name: Build the installer
+        run: pnpm tauri build
+
+      - name: Collect the installer
+        id: collect
+        run: |
+          version=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Unexpected version: $version" >&2
+            exit 1
+          fi
+          mkdir -p release
+          cp "target/release/bundle/nsis/SanctuaryFlow_${version}_x64-setup.exe" release/SanctuaryFlow-Setup-x64.exe
+          (cd release && sha256sum SanctuaryFlow-Setup-x64.exe > SHA256SUMS.txt)
+          cat release/SHA256SUMS.txt
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Attest where the installer came from
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: release/SanctuaryFlow-Setup-x64.exe
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.collect.outputs.version }}
+        run: |
+          tag="v$VERSION"
+          sha=$(cut -d' ' -f1 release/SHA256SUMS.txt)
+          built=$(date -u +"%Y-%m-%d %H:%M UTC")
+          cat > notes.md <<EOF
+          Windows installer for SanctuaryFlow $VERSION, built by GitHub Actions from commit ${GITHUB_SHA:0:7} on $built.
+
+          **Download:** \`SanctuaryFlow-Setup-x64.exe\` below (Windows 10 and 11, 64-bit).
+
+          **SHA-256:** \`$sha\`
+
+          Check it in PowerShell: \`Get-FileHash .\\SanctuaryFlow-Setup-x64.exe\`
+          Check where it was built: \`gh attestation verify SanctuaryFlow-Setup-x64.exe -R $GITHUB_REPOSITORY\`
+          EOF
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            # Same version: move its tag to this commit and replace the installer.
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$tag" -f sha="$GITHUB_SHA" -F force=true > /dev/null
+            gh release upload "$tag" release/SanctuaryFlow-Setup-x64.exe release/SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit "$tag" --notes-file notes.md --latest --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$tag" release/SanctuaryFlow-Setup-x64.exe release/SHA256SUMS.txt \
+              --target "$GITHUB_SHA" --title "SanctuaryFlow $VERSION" --notes-file notes.md --latest --repo "$GITHUB_REPOSITORY"
+          fi

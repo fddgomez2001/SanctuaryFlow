@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-powerpoint-available"
+description = "Enables the powerpoint_available command without any pre-configured scope."
+commands.allow = ["powerpoint_available"]
+
+[[permission]]
+identifier = "deny-powerpoint-available"
+description = "Denies the powerpoint_available command without any pre-configured scope."
+commands.deny = ["powerpoint_available"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-songs-import-preview"
+description = "Enables the songs_import_preview command without any pre-configured scope."
+commands.allow = ["songs_import_preview"]
+
+[[permission]]
+identifier = "deny-songs-import-preview"
+description = "Denies the songs_import_preview command without any pre-configured scope."
+commands.deny = ["songs_import_preview"]

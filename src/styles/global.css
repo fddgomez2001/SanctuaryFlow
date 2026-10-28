@@ -1,0 +1,290 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/montserrat";
+@import "@fontsource-variable/montserrat/wght-italic.css";
+@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/playfair-display";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/400-italic.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/600-italic.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/poppins/700-italic.css";
+
+/* `light:` styles apply only to the light operator interface. */
+@custom-variant light (&:where([data-ui="light"], [data-ui="light"] *));
+
+@theme {
+  --color-bg: #101318;
+  --color-panel: #181d25;
+  --color-elevated: #222936;
+  --color-hover: #2a3242;
+  /* The same gold as the light interface. */
+  --color-primary: #b0842a;
+  --color-primary-hover: #c29437;
+  --color-secondary: #1f2d4d;
+  /* Text in the primary hue that stays readable on panels (badges, headings). */
+  --color-accent: #e0b95c;
+  --color-text: #f8fafc;
+  --color-muted: #a8b2c1;
+  --color-subtle: #6b7686;
+  --color-border: #343b49;
+  --color-border-strong: #4a5366;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-live: #dc2626;
+
+  --font-sans: "Inter Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  /* Headings that should feel elegant: the Home page, the welcome. */
+  --font-display: "Playfair Display Variable", Georgia, "Times New Roman", serif;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
+
+/* High-contrast operator interface (Settings → General). */
+:root[data-ui="contrast"] {
+  --color-bg: #000000;
+  --color-panel: #0a0c10;
+  --color-elevated: #1a1f29;
+  --color-hover: #262d3a;
+  --color-text: #ffffff;
+  --color-muted: #e2e8f0;
+  --color-subtle: #cbd5e1;
+  --color-border: #7c8799;
+  --color-border-strong: #a8b2c1;
+  --color-primary: #3b82f6;
+  --color-accent: #bfdbfe;
+}
+
+/* Light operator interface: white and soft grey surfaces with gold accents. */
+:root[data-ui="light"] {
+  color-scheme: light;
+  --color-bg: #f4f5f7;
+  --color-panel: #ffffff;
+  --color-elevated: #f1f2f5;
+  --color-hover: #e8eaee;
+  --color-primary: #b0842a;
+  --color-primary-hover: #956e1e;
+  --color-secondary: #1f2d4d;
+  --color-accent: #8a6417;
+  --color-text: #1d2433;
+  --color-muted: #4b5565;
+  --color-subtle: #6b7383;
+  --color-border: #e2e5ea;
+  --color-border-strong: #c8cdd5;
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #dc2626;
+  --color-live: #dc2626;
+}
+
+:root:not([data-ui="light"]) {
+  color-scheme: dark;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"],
+  .selectable {
+    user-select: text;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 8px;
+    border: 2px solid var(--color-panel);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-strong);
+  }
+}
+
+@layer components {
+  .field-label {
+    @apply mb-1 block text-xs font-medium text-muted;
+  }
+  .input {
+    @apply h-9 w-full rounded-md border border-border bg-bg light:bg-panel px-3 text-sm text-text placeholder:text-subtle
+      transition-colors hover:border-border-strong focus:border-primary focus:outline-none disabled:opacity-50;
+  }
+  .textarea {
+    @apply w-full rounded-md border border-border bg-bg light:bg-panel px-3 py-2 text-sm text-text placeholder:text-subtle
+      transition-colors hover:border-border-strong focus:border-primary focus:outline-none;
+  }
+  .panel {
+    @apply rounded-lg border border-border bg-panel light:shadow-[0_1px_3px_rgb(16_24_40/0.06)];
+  }
+  .kbd {
+    @apply inline-flex min-w-5 items-center justify-center rounded border border-border-strong bg-elevated px-1
+      font-mono text-[11px] leading-4 text-muted;
+  }
+}
+
+@keyframes sf-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sf-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* The Go Live button while live: gold with a light passing over it and a soft glow. */
+.sf-live-gold {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(135deg, #e3bd62, #b0842a 55%, #8a6417);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  animation: sf-gold-glow 2.4s ease-in-out infinite;
+}
+.sf-live-gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 244 210 / 0.75) 50%, transparent 70%);
+  transform: translateX(-110%);
+  animation: sf-gold-shine 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sf-gold-shine {
+  0% {
+    transform: translateX(-110%);
+  }
+  65%,
+  100% {
+    transform: translateX(110%);
+  }
+}
+@keyframes sf-gold-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(212 166 74 / 0.55), 0 6px 18px -6px rgb(176 132 42 / 0.8);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgb(212 166 74 / 0), 0 6px 18px -6px rgb(176 132 42 / 0.8);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sf-live-gold,
+  .sf-live-gold::after {
+    animation: none;
+  }
+}
+
+/* The Media Library entrance: a slow zoom on each picture. */
+@keyframes sf-kenburns {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* The vinyl record turning (33⅓ rpm). */
+@keyframes sf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Slide transitions (theme → Transition). */
+@keyframes sf-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(6%);
+  }
+}
+@keyframes sf-slide-out {
+  to {
+    opacity: 0;
+    transform: translateX(-6%);
+  }
+}
+@keyframes sf-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(5%);
+  }
+}
+@keyframes sf-rise-out {
+  to {
+    opacity: 0;
+    transform: translateY(-5%);
+  }
+}
+@keyframes sf-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+@keyframes sf-zoom-out {
+  to {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+@keyframes sf-blur-in {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+}
+@keyframes sf-blur-out {
+  to {
+    opacity: 0;
+    filter: blur(14px);
+  }
+}
