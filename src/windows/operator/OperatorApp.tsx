@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { listen } from "@tauri-apps/api/event";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useNav, type PageId } from "@/app/navigation";
 import { api } from "@/services/api";
@@ -68,6 +69,13 @@ export function OperatorApp() {
     if (settings.data) applyUiTheme(uiTheme);
   }, [settings.data, uiTheme]);
   useSyncEngine(libraryReady);
+
+  // Built-in content installed in the background (such as a Bible) shows up without a restart.
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const un = listen("library://changed", () => void queryClient.invalidateQueries());
+    return () => void un.then((u) => u());
+  }, [queryClient]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

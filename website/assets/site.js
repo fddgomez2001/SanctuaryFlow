@@ -63,6 +63,11 @@
     if (hashRow && !sha) hashRow.hidden = true;
     setText("[data-release-line]", ["Free", "Version " + version, size, "Windows 10 and 11, 64-bit"].filter(Boolean).join(" · "));
 
+    // A version updated in the last 30 days is marked as a new update.
+    var fresh = !isNaN(updated.getTime()) && Date.now() - updated.getTime() < 30 * 86400000;
+    var badges = document.querySelectorAll("[data-new-update]");
+    for (var j = 0; j < badges.length; j++) badges[j].hidden = !fresh;
+
     var details = document.querySelector("[data-release]");
     if (details && version) details.hidden = false;
   }

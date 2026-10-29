@@ -653,6 +653,11 @@ pub fn reset(conn: &mut Connection) -> Result<()> {
     }
     // Unedited built-in themes are the same everywhere and never need uploading.
     tx.execute("UPDATE presentation_themes SET synced_revision = revision WHERE is_builtin = 1 AND revision = 1", [])?;
+    // So are unedited built-in songs.
+    tx.execute(
+        "UPDATE songs SET synced_revision = revision WHERE id LIKE ?1 || '%' AND revision = 1",
+        [crate::seed::BUILTIN_SONG_ID_PREFIX],
+    )?;
     tx.execute("DELETE FROM sync_outbox", [])?;
     tx.execute("DELETE FROM sync_conflicts", [])?;
     tx.execute("DELETE FROM sync_metadata", [])?;

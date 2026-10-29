@@ -183,27 +183,7 @@ pub fn read_sources(path: &Path) -> Result<Vec<SourceText>> {
             }
         }
     } else if extension(&path.to_string_lossy()) == "zip" {
-        let mut archive = zip::ZipArchive::new(std::fs::File::open(path)?)?;
-        let mut total = 0u64;
-        let mut entries: Vec<(String, usize)> = Vec::with_capacity(archive.len());
-        for i in 0..archive.len() {
-            entries.push((archive.by_index(i)?.name()?.to_string(), i));
-        }
-        entries.sort();
-        for (name, index) in entries {
-            let mut f = archive.by_index(index)?;
-            if f.is_dir() || !is_candidate(&name) {
-                continue;
-            }
-            total += f.size();
-            if total > MAX_SOURCE_BYTES {
-                return Err(Error::validation("The archive is too large to import."));
-            }
-            let mut bytes = Vec::with_capacity(f.size() as usize);
-            f.read_to_end(&mut bytes)?;
-            let short = name.rsplit('/').next().unwrap_or(&name).to_string();
-            out.push(SourceText { text: decode_text(&short, &bytes)?, name: short });
-        }
+        out = read_zip(std::fs::File::open(path)?)?;
     } else {
         let meta = std::fs::metadata(path)?;
         if meta.len() > MAX_SOURCE_BYTES {
@@ -214,6 +194,33 @@ pub fn read_sources(path: &Path) -> Result<Vec<SourceText>> {
     }
     if out.is_empty() {
         return Err(Error::validation("No Bible source files were found at that location."));
+    }
+    Ok(out)
+}
+
+/// Reads the source files in a zip archive (a file or bytes in memory).
+pub fn read_zip(reader: impl Read + std::io::Seek) -> Result<Vec<SourceText>> {
+    let mut archive = zip::ZipArchive::new(reader)?;
+    let mut out = Vec::new();
+    let mut total = 0u64;
+    let mut entries: Vec<(String, usize)> = Vec::with_capacity(archive.len());
+    for i in 0..archive.len() {
+        entries.push((archive.by_index(i)?.name()?.to_string(), i));
+    }
+    entries.sort();
+    for (name, index) in entries {
+        let mut f = archive.by_index(index)?;
+        if f.is_dir() || !is_candidate(&name) {
+            continue;
+        }
+        total += f.size();
+        if total > MAX_SOURCE_BYTES {
+            return Err(Error::validation("The archive is too large to import."));
+        }
+        let mut bytes = Vec::with_capacity(f.size() as usize);
+        f.read_to_end(&mut bytes)?;
+        let short = name.rsplit('/').next().unwrap_or(&name).to_string();
+        out.push(SourceText { text: decode_text(&short, &bytes)?, name: short });
     }
     Ok(out)
 }

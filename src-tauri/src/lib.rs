@@ -9,7 +9,7 @@ mod state;
 
 use std::path::PathBuf;
 
-use sanctuary_core::Database;
+use sanctuary_core::{Database, bible, seed};
 use tauri::{Emitter, Manager, WebviewWindowBuilder, WindowEvent};
 use tauri_plugin_log::{RotationStrategy, Target, TargetKind, TimezoneStrategy};
 
@@ -59,9 +59,49 @@ fn e2e_debug_port() -> Option<String> {
     None
 }
 
+/// Sent to the console when built-in content was added after it opened.
+pub const EVENT_LIBRARY_CHANGED: &str = "library://changed";
+
+/// Built-in content is added to every library, except in end-to-end tests,
+/// which start with an empty library unless they set `flag` to 1.
+fn builtins_enabled(flag: &str) -> bool {
+    e2e_debug_port().is_none() || std::env::var(flag).is_ok_and(|v| v == "1")
+}
+
+/// Adds the built-in hymns the library is missing.
+pub(crate) fn add_builtin_songs(db: &Database) {
+    if !builtins_enabled("SANCTUARYFLOW_E2E_BUILTIN_SONGS") {
+        return;
+    }
+    match db.write(seed::seed_builtin_songs) {
+        Ok(0) => {}
+        Ok(n) => log::info!("added {n} built-in songs"),
+        Err(e) => log::error!("could not add the built-in songs: {e}"),
+    }
+}
+
+/// Installs the built-in Bibles the library has never had. That takes a few
+/// seconds, so it runs in the background and tells the console when done.
+pub(crate) fn add_builtin_bibles(app: &tauri::AppHandle) {
+    if !builtins_enabled("SANCTUARYFLOW_E2E_BUILTIN_BIBLE") {
+        return;
+    }
+    let Ok(db) = app.state::<AppState>().db() else { return };
+    let app = app.clone();
+    std::thread::spawn(move || match db.write(bible::builtin::install_builtin_bibles) {
+        Ok(added) if added.is_empty() => {}
+        Ok(added) => {
+            log::info!("installed built-in Bibles: {}", added.join(", "));
+            let _ = app.emit_to(MAIN_LABEL, EVENT_LIBRARY_CHANGED, ());
+        }
+        Err(e) => log::error!("could not install the built-in Bibles: {e}"),
+    });
+}
+
 fn open_library(paths: &Paths) -> (Option<Database>, Option<String>, Vec<String>) {
     match Database::open(&paths.db_path) {
         Ok((db, report)) => {
+            add_builtin_songs(&db);
             let mut notices = Vec::new();
             if let Some(backup) = report.pre_migration_backup {
                 notices.push(format!(
@@ -157,6 +197,7 @@ pub fn run() {
             main.show()?;
 
             display::start_watcher(handle.clone());
+            add_builtin_bibles(&handle);
             commands::backup::start_scheduler(handle);
             Ok(())
         })

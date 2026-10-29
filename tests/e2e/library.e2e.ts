@@ -101,6 +101,24 @@ test("songs are organised by artist, with cover pictures and a simple editor", a
   }
 });
 
+test("the built-in hymns come with the library", async () => {
+  process.env.SANCTUARYFLOW_E2E_BUILTIN_SONGS = "1";
+  const app = await launchApp();
+  delete process.env.SANCTUARYFLOW_E2E_BUILTIN_SONGS;
+  const { main } = app;
+  try {
+    await goTo(app, "Song Library");
+    await expect(main.getByRole("button", { name: /^Charles Wesley 4 songs$/ })).toBeVisible();
+    await main.getByLabel("Search songs").fill("amazing grace");
+    await main.getByRole("button", { name: /^Amazing Grace/ }).first().click();
+    await expect(main.getByRole("heading", { name: "Amazing Grace" })).toBeVisible();
+    await expect(main.getByRole("button", { name: "John Newton", exact: true }).first()).toBeVisible();
+    expect(app.errors).toEqual([]);
+  } finally {
+    await app.close();
+  }
+});
+
 test("a chorus can be presented line by line", async () => {
   const app = await launchApp();
   const { main } = app;
@@ -167,6 +185,26 @@ test("a Bible translation imports, validates and is readable and searchable offl
     await main.getByLabel("Go to reference").fill("Jhn 22:1");
     await main.getByRole("button", { name: "Go", exact: true }).click();
     await expect(main.getByText(/has 21 chapters/)).toBeVisible();
+    expect(app.errors).toEqual([]);
+  } finally {
+    await app.close();
+  }
+});
+
+test("the built-in ASV Bible installs in the background on first start", async () => {
+  process.env.SANCTUARYFLOW_E2E_BUILTIN_BIBLE = "1";
+  const app = await launchApp();
+  delete process.env.SANCTUARYFLOW_E2E_BUILTIN_BIBLE;
+  const { main } = app;
+  try {
+    // The page opened before or during the install updates by itself.
+    await goTo(app, "Bible Library");
+    await expect(main.getByLabel("Go to reference")).toBeVisible({ timeout: 60_000 });
+    await main.getByLabel("Go to reference").fill("John 3:16");
+    await main.getByRole("button", { name: "Go", exact: true }).click();
+    await expect(main.getByRole("paragraph").filter({ hasText: "For God so loved the world" })).toBeVisible();
+    const translations = await app.invoke<{ code: string; licenseName: string | null }[]>("bible_translations");
+    expect(translations.map((t) => [t.code, t.licenseName])).toEqual([["ASV", "Public Domain"]]);
     expect(app.errors).toEqual([]);
   } finally {
     await app.close();

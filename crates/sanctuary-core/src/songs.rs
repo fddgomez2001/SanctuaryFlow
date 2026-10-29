@@ -628,38 +628,54 @@ pub(crate) fn save_song_tx(tx: &Connection, doc: SongDocument) -> Result<String>
         }
         None => {
             let id = doc.id.clone().unwrap_or_else(new_id);
-            tx.execute(
-                "INSERT INTO songs (id, title, artist, original_key, tempo, language, category, copyright_holder,
-                   copyright_year, ccli_number, source, license, notes, arrangement, theme_id, created_at, updated_at,
-                   audio_media_id, cover_media_id, lyric_sync)
-                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?16, ?17, ?18, ?19)",
-                params![
-                    id,
-                    doc.title,
-                    doc.artist,
-                    doc.original_key,
-                    doc.tempo,
-                    doc.language,
-                    doc.category,
-                    doc.copyright_holder,
-                    doc.copyright_year,
-                    doc.ccli_number,
-                    doc.source,
-                    doc.license,
-                    doc.notes,
-                    arrangement,
-                    doc.theme_id,
-                    now,
-                    doc.audio_media_id,
-                    doc.cover_media_id,
-                    lyric_sync
-                ],
-            )?;
-            write_children(tx, &id, &doc)?;
+            insert_song(tx, &id, &doc, 0)?;
             sync::enqueue(tx, sync::ENTITY_SONG, &id, sync::OP_UPSERT, 1)?;
             Ok(id)
         }
     }
+}
+
+/// Inserts a new song row with its sections and tags.
+fn insert_song(tx: &Connection, id: &str, doc: &SongDocument, synced_revision: i64) -> Result<()> {
+    let arrangement = doc.arrangement.as_ref().map(serde_json::to_string).transpose()?;
+    let lyric_sync = doc.lyric_sync.as_ref().map(serde_json::to_string).transpose()?;
+    tx.execute(
+        "INSERT INTO songs (id, title, artist, original_key, tempo, language, category, copyright_holder,
+           copyright_year, ccli_number, source, license, notes, arrangement, theme_id, created_at, updated_at,
+           audio_media_id, cover_media_id, lyric_sync, synced_revision)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?16, ?17, ?18, ?19, ?20)",
+        params![
+            id,
+            doc.title,
+            doc.artist,
+            doc.original_key,
+            doc.tempo,
+            doc.language,
+            doc.category,
+            doc.copyright_holder,
+            doc.copyright_year,
+            doc.ccli_number,
+            doc.source,
+            doc.license,
+            doc.notes,
+            arrangement,
+            doc.theme_id,
+            now_iso(),
+            doc.audio_media_id,
+            doc.cover_media_id,
+            lyric_sync,
+            synced_revision
+        ],
+    )?;
+    write_children(tx, id, doc)
+}
+
+/// Adds a song that ships with the app. Built-in songs are identical on every
+/// device, so they start in sync and only upload once the operator edits them.
+pub(crate) fn insert_builtin_tx(tx: &Connection, doc: SongDocument) -> Result<()> {
+    let doc = normalize_document(doc)?;
+    let id = doc.id.clone().ok_or_else(|| Error::validation("A built-in song needs an id."))?;
+    insert_song(tx, &id, &doc, 1)
 }
 
 /// Gives every section a new id and remaps the arrangement to match, so a

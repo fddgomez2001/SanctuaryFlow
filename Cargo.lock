@@ -3145,7 +3145,7 @@ dependencies = [
 
 [[package]]
 name = "sanctuary-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "chrono",
  "csv",
@@ -3165,7 +3165,7 @@ dependencies = [
 
 [[package]]
 name = "sanctuaryflow"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "chrono",
  "csv",

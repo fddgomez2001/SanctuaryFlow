@@ -83,6 +83,7 @@ pub async fn backup_restore(app: AppHandle, state: State<'_, AppState>, path: St
                 Ok((db, _)) => {
                     db.write(|c| backup::merge_history(c, &old_history))?;
                     swap.commit();
+                    crate::add_builtin_songs(&db);
                     Ok((db, prepared.manifest.clone()))
                 }
                 Err(e) => {
@@ -98,6 +99,7 @@ pub async fn backup_restore(app: AppHandle, state: State<'_, AppState>, path: St
         Ok((db, manifest)) => {
             state.set_db(db);
             let _ = app.emit_to(MAIN_LABEL, EVENT_LIBRARY_RESTORED, ());
+            crate::add_builtin_bibles(&app);
             Ok(RestoreOutcome { manifest, safety_backup: safety.path })
         }
         Err(e) => {

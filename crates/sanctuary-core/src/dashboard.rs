@@ -7,6 +7,7 @@ use ts_rs::TS;
 use crate::backup::{self, LibraryCounts};
 use crate::bible::{self, SavedPassage};
 use crate::error::Result;
+use crate::seed;
 use crate::services::{self, ServicePlanQuery, ServicePlanSummary, ServiceSort};
 use crate::songs::{self, SongQuery, SongSort, SongSummary};
 use crate::sync;
@@ -119,9 +120,14 @@ pub fn summary(conn: &Connection, today: &str) -> Result<DashboardSummary> {
          WHERE deleted_at IS NULL AND is_template = 0 AND service_date IS NOT NULL GROUP BY m",
         (-4..=1).map(|o| month_from(today, o)).collect(),
     )?;
+    // Songs the church added; the built-in hymns came with the app.
     let songs_by_month = per_month(
         conn,
-        "SELECT substr(created_at, 1, 7) AS m, COUNT(*) FROM songs WHERE deleted_at IS NULL GROUP BY m",
+        &format!(
+            "SELECT substr(created_at, 1, 7) AS m, COUNT(*) FROM songs
+             WHERE deleted_at IS NULL AND id NOT LIKE '{}%' GROUP BY m",
+            seed::BUILTIN_SONG_ID_PREFIX
+        ),
         (-5..=0).map(|o| month_from(today, o)).collect(),
     )?;
     let top_songs = conn

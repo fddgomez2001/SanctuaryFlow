@@ -1,11 +1,15 @@
 //! Built-in data seeded on every start. Seeding never overwrites user changes:
-//! built-in themes are inserted once and settings only receive missing keys.
+//! built-in themes and songs are inserted once and settings only receive
+//! missing keys.
+
+use std::collections::HashSet;
 
 use rusqlite::{Connection, OptionalExtension, params};
 use serde_json::json;
 
 use crate::canon;
 use crate::error::Result;
+use crate::songs::{self, SongDocument};
 use crate::util::{new_id, now_iso};
 
 pub const THEME_CLASSIC_BLACK: &str = "00000000-0000-4000-8000-000000000001";
@@ -214,6 +218,38 @@ fn seed_themes(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
+/// Built-in song ids all start with this; the rest is the song's number.
+pub const BUILTIN_SONG_ID_PREFIX: &str = "00000000-0000-4000-9000-";
+
+/// The songs that ship with the app: public-domain hymns from EasyWorship 7's
+/// sample library (shared/songs/builtin-hymns.json).
+pub fn builtin_songs() -> Vec<SongDocument> {
+    serde_json::from_str(include_str!("../../../shared/songs/builtin-hymns.json"))
+        .expect("embedded hymn collection is valid JSON")
+}
+
+/// Adds the built-in songs the library does not have yet and returns how
+/// many were added. Edited songs are left alone, and a deleted one keeps its
+/// tombstone, so it does not come back. Not part of `seed_all`, so test
+/// libraries start empty.
+pub fn seed_builtin_songs(conn: &mut Connection) -> Result<u32> {
+    let tx = conn.transaction()?;
+    let existing: HashSet<String> = tx
+        .prepare("SELECT id FROM songs WHERE id LIKE ?1 || '%'")?
+        .query_map([BUILTIN_SONG_ID_PREFIX], |r| r.get(0))?
+        .collect::<std::result::Result<_, _>>()?;
+    let mut added = 0;
+    for doc in builtin_songs() {
+        if doc.id.as_ref().is_some_and(|id| existing.contains(id)) {
+            continue;
+        }
+        songs::insert_builtin_tx(&tx, doc)?;
+        added += 1;
+    }
+    tx.commit()?;
+    Ok(added)
+}
+
 pub fn default_settings() -> Vec<(&'static str, serde_json::Value)> {
     vec![
         ("general.churchName", json!("")),
@@ -289,4 +325,71 @@ fn seed_device(conn: &Connection) -> Result<()> {
 
 pub fn device_id(conn: &Connection) -> Result<String> {
     Ok(conn.query_row("SELECT value FROM device_metadata WHERE key = 'device_id'", [], |r| r.get(0))?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::db::Database;
+    use crate::songs::SongQuery;
+    use crate::{dashboard, sync};
+
+    fn song_id(n: u32) -> String {
+        format!("{BUILTIN_SONG_ID_PREFIX}{n:012}")
+    }
+
+    #[test]
+    fn builtin_songs_are_valid_public_domain_hymns() {
+        let all = builtin_songs();
+        assert_eq!(all.len(), 223);
+        let mut ids = HashSet::new();
+        for doc in all {
+            let id = doc.id.clone().unwrap();
+            assert!(id.starts_with(BUILTIN_SONG_ID_PREFIX) && ids.insert(id), "{}", doc.title);
+            assert_eq!(doc.license.as_deref(), Some("Public Domain"), "{}", doc.title);
+            assert!(doc.sections.iter().all(|s| !s.lyrics.trim().is_empty()), "{}", doc.title);
+            songs::normalize_document(doc).unwrap();
+        }
+    }
+
+    #[test]
+    fn hymns_sing_their_chorus_after_every_verse() {
+        let db = Database::open_in_memory().unwrap();
+        db.write(seed_builtin_songs).unwrap();
+        let song = db.read(|c| songs::get_song(c, &song_id(100))).unwrap();
+        assert_eq!((song.title.as_str(), song.artist.as_deref()), ("It Is Well With My Soul", Some("Horatio G. Spafford, Philip Paul Bliss")));
+        let label = |id: &String| song.sections.iter().find(|s| &s.id == id).unwrap().label.clone();
+        let order: Vec<String> = song.arrangement.as_ref().unwrap().iter().map(label).collect();
+        assert_eq!(order, ["Verse 1", "Chorus", "Verse 2", "Chorus", "Verse 3", "Chorus", "Verse 4", "Chorus"]);
+    }
+
+    #[test]
+    fn builtin_songs_are_added_once_and_never_uploaded_unless_edited() {
+        let db = Database::open_in_memory().unwrap();
+        assert_eq!(db.write(seed_builtin_songs).unwrap(), 223);
+        let found = db.read(|c| songs::list_songs(c, &SongQuery { text: Some("amazing grace".into()), ..Default::default() })).unwrap();
+        let grace = found.items.iter().find(|s| s.title == "Amazing Grace").unwrap();
+        assert_eq!(grace.artist.as_deref(), Some("John Newton"));
+        assert!(!grace.missing_copyright, "public domain needs no copyright details");
+        assert_eq!(db.read(sync::open_operation_count).unwrap(), 0, "built-ins start in sync");
+
+        // The church's own changes win: an edit is kept and a deleted song stays deleted.
+        let mut edited = songs::to_document(&db.read(|c| songs::get_song(c, &song_id(11))).unwrap());
+        edited.title = "Amazing Grace (Our Version)".into();
+        db.write(|c| songs::save_song(c, edited)).unwrap();
+        db.write(|c| songs::delete_song(c, &song_id(193))).unwrap();
+        assert_eq!(db.write(seed_builtin_songs).unwrap(), 0);
+        assert_eq!(db.read(|c| songs::get_song(c, &song_id(11))).unwrap().title, "Amazing Grace (Our Version)");
+        assert!(db.read(|c| songs::get_song(c, &song_id(193))).is_err());
+
+        // Starting sync over uploads only what the church changed.
+        db.write(sync::reset).unwrap();
+        assert_eq!(db.read(sync::open_operation_count).unwrap(), 2);
+
+        // Home's "songs added" chart counts the church's songs, not the built-ins.
+        let today = now_iso()[..10].to_string();
+        let s = db.read(|c| dashboard::summary(c, &today)).unwrap();
+        assert_eq!(s.counts.songs, 222);
+        assert!(s.songs_by_month.iter().all(|m| m.count == 0));
+    }
 }

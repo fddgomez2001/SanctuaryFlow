@@ -1,6 +1,7 @@
 //! Bible library: translations, verse lookup, passages, search, and the
 //! recently used / favorite passage lists. All reads come from local SQLite.
 
+pub mod builtin;
 pub mod import;
 pub mod validate;
 
